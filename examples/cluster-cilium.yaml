@@ -22,19 +22,17 @@ spec:
     variables:
     - name: allowedNodes
       value:
-      - pve1
-      - pve2
-      - pve3
+      - mgr
     - name: controlPlaneEndpoint
       value:
-        host: 10.10.10.9
+        host: 10.0.0.20
         port: 6443
     - name: dnsServers
       value: [8.8.8.8, 8.8.4.4]
     - name: ipv4Config
       value:
-        addresses: [10.10.10.10-10.10.10.20]
-        gateway: 10.10.10.1
+        addresses: [10.0.0.10-10.0.0.20]
+        gateway: 10.0.0.1
         prefix: 24
 #   - name: ipv6Config
 #     value:
@@ -50,7 +48,7 @@ spec:
           controlPlane:
             network:
               default:
-                bridge: vmbr0
+                bridge: vmbr50
 #             additionalDevices:
 #               - name: net1
 #                 model: virtio
@@ -66,12 +64,12 @@ spec:
 #           numSockets: 1
 #           numCores: 4
 #           memoryMiB: 4096
-            sourceNode: pve1
-            templateID: 100
+            sourceNode: mgr
+            templateID: 501
           workerNode:
             network:
               default:
-                bridge: vmbr0
+                bridge: vmbr50
 #             additionalDevices:
 #               - name: net1
 #                 model: virtio
@@ -87,12 +85,12 @@ spec:
 #           numSockets: 1
 #           numCores: 4
 #           memoryMiB: 4096
-            sourceNode: pve1
-            templateID: 100
-          loadBalancer:
-            network:
-              default:
-                bridge: vmbr0
+#            sourceNode: pve1
+#            templateID: 501
+#          loadBalancer:
+#            network:
+#              default:
+#                bridge: vmbr0
 #             additionalDevices:
 #               - name: net1
 #                 model: virtio
@@ -115,10 +113,10 @@ spec:
 #           numSockets: 1
 #           numCores: 2
 #           memoryMiB: 2048
-            sourceNode: pve1
-            templateID: 100
+#            sourceNode: pve1
+#            templateID: 100
         sshAuthorizedKeys:
-        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJPK5kBd7cxXAHZ6UbeE+ysOlSjOFare3fCCZJ3xtXt1 capmox@k8s.io
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOPyJsgk5eR/GGfsE2A/XIWju/GCHpAaNiZ9yaE6dCRi root@mgr.cp.if.ua
 #       virtualIPNetworkInterface: eno1
 # ---
 # apiVersion: ipam.cluster.x-k8s.io/v1alpha2
