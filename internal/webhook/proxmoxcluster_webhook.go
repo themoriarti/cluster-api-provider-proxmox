@@ -24,7 +24,6 @@ import (
 	"regexp"
 	"strings"
 
-	infrav1 "github.com/ionos-cloud/cluster-api-provider-proxmox/api/v1alpha1"
 	"github.com/pkg/errors"
 	"go4.org/netipx"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -32,6 +31,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
+
+	infrav1 "github.com/ionos-cloud/cluster-api-provider-proxmox/api/v1alpha1"
 )
 
 var _ admission.CustomValidator = &ProxmoxCluster{}
@@ -93,11 +94,15 @@ func (*ProxmoxCluster) ValidateUpdate(_ context.Context, _ runtime.Object, newOb
 }
 
 func validateControlPlaneEndpoint(cluster *infrav1.ProxmoxCluster) error {
-	ep := cluster.Spec.ControlPlaneEndpoint
+	// Skipping the validation of the Control Plane endpoint in case of externally managed Control Plane:
+	// the Cluster API Control Plane provider will eventually provide the LB.
+	if cluster.Spec.ExternalManagedControlPlane {
+		return nil
+	}
 
 	gk, name := cluster.GroupVersionKind().GroupKind(), cluster.GetName()
 
-	endpoint := ep.Host
+	endpoint := cluster.Spec.ControlPlaneEndpoint.Host
 
 	addr, err := netip.ParseAddr(endpoint)
 
